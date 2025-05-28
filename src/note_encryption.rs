@@ -141,6 +141,16 @@ impl Domain for OrchardDomain {
         esk.derive_public(note.recipient().g_d())
     }
 
+    // for use when we don't need to handle full note plaintext
+    // i.e. only need intended recipient during encryption
+    fn ka_derive_public_from_recipient(
+        recipient: &Self::Recipient,
+        esk_bytes: &EphemeralKeyBytes,
+    ) -> Self::EphemeralPublicKey {
+        let esk = Self::esk(esk_bytes).expect("converting to ephemeral secret key from bytes failed!");
+        esk.derive_public(recipient.g_d().into())
+    }
+
     fn ka_agree_enc(
         esk: &Self::EphemeralSecretKey,
         pk_d: &Self::DiversifiedTransmissionKey,
@@ -194,6 +204,10 @@ impl Domain for OrchardDomain {
 
     fn epk(ephemeral_key: &EphemeralKeyBytes) -> Option<Self::EphemeralPublicKey> {
         EphemeralPublicKey::from_bytes(&ephemeral_key.0).into()
+    }
+
+    fn esk(ephemeral_key: &EphemeralKeyBytes) -> Option<Self::EphemeralSecretKey> {
+        EphemeralSecretKey::from_bytes(&ephemeral_key.0).into()
     }
 
     fn cmstar(note: &Self::Note) -> Self::ExtractedCommitment {
