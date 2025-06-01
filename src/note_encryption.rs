@@ -145,9 +145,8 @@ impl Domain for OrchardDomain {
     // i.e. only need intended recipient during encryption
     fn ka_derive_public_from_recipient(
         recipient: &Self::Recipient,
-        esk_bytes: &EphemeralKeyBytes,
+        esk: &Self::EphemeralSecretKey,
     ) -> Self::EphemeralPublicKey {
-        let esk = Self::esk(esk_bytes).expect("converting to ephemeral secret key from bytes failed!");
         esk.derive_public(recipient.g_d().into())
     }
 
